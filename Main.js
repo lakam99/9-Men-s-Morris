@@ -1,4 +1,4 @@
-class Drawer {
+class Drawer { //This class takes care of drawing objects to the screen
 	constructor (context) {
 		this.c = context;
 	}
@@ -35,6 +35,7 @@ class Drawer {
 	}
 }
 
+//BasicType classes
 class Square {
 	constructor (x,y,size) {
 		this.x = x;
@@ -81,8 +82,9 @@ class Line {
 		this.y2 = y2;
 	}
 }
+//end BasicType classes
 
-class Mouse {
+class Mouse {//Class that keeps track of mouse movement
 	constructor(canvas) {
 		this.canvas = canvas;
 		this.x = 0;
@@ -99,7 +101,7 @@ class Mouse {
 	
 }
 
-class Board {
+class Board { //Class that holds the board's appearance and provides functionality allowing you to get which dot on the board was clicked
 	constructor(canvas) {
 		this.canvas = canvas;
 		this.mouseX = 0;
@@ -145,7 +147,7 @@ class Board {
 		console.log(this.rows);
 	}
 	
-	dotCoodAtMouse(){
+	dotCoodAtMouse(){//Returns which dot was clicked as an (x,y) coordinate from this.rows[][] 2D array
 		var hitbox = 10;
 		var dot = 0;
 		
@@ -154,36 +156,38 @@ class Board {
 				dot = this.rows[x][y];
 				if (this.mouseX >= dot.x - hitbox && this.mouseX <= dot.x + hitbox && this.mouseY >= dot.y - hitbox && this.mouseY <= dot.y + hitbox) {
 					console.log("Clicked " + dot.x + " " + dot.y + " at " + x + ", " + y);
-					return {'x': x, 'y': y};
+					return [x, y];
 				}
 			}
 		}
+		return null;
 	}
 	
-	dotIndexAtMouse() {
+	dotIndexAtMouse() {//Returns which dot was clicked as an index to this.dots[]
 		var hitbox = 10;
 		var dot = 0;
 		
-		for (var i = 0; i < this.dots; i++) {
+		for (var i = 0; i < this.dots.length; i++) {
 			dot = this.dots[i];
 			if (this.mouseX >= dot.x - hitbox && this.mouseX <= dot.x + hitbox && this.mouseY >= dot.y - hitbox && this.mouseY <= dot.y + hitbox) {
 				console.log("Clicked " + dot.x + " " + dot.y + " at " + i);
 				return i;
 			}
 		}
+		return null;
 	}
 	
-	onClick(evt) {
+	onClick(evt) { //TODO: This function is triggered whenever the user clicks on the board
+	//TODO: This function will be the main functionality for this program; most things will happen in here
+	//Most likely the game will be conditions checking the game state and reacting accordingly to if the user clicked a dot to play in
 		var rect = this.canvas.getBoundingClientRect();
 		this.mouseX = evt.clientX - rect.left;
 		this.mouseY = evt.clientY - rect.top;
-		var dotCoods = this.dotCoodAtMouse();
-		var dotIndex = this.dotIndexAtMouse();
+		var dotCoods = this.dotCoodAtMouse(); //Use this to get the coordinate of the dot clicked; returns null if none clicked
+		var dotIndex = this.dotIndexAtMouse(); //Use this to get the index of the dot clicked; returns null if none clicked
 		//console.log("Clicked " + this.mouseX + " " + this.mouseY);
 	}
 }
-
-
 
 console.log("Hello");
 const canvas = document.getElementById("c");
