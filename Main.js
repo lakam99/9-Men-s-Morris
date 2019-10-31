@@ -15,12 +15,16 @@ class Drawer {
 		for (var i = 0; i < board.dots.length; i++) {
 			this.drawDot(board.dots[i]);
 		}
+		
+		for (var i = 0; i < board.lines.length; i++) {
+			this.drawLine(board.lines[i]);
+		}
 	}
 	
-	drawLine(x1, y1, x2, y2) {
+	drawLine(line) {
 		this.c.beginPath();
-		this.c.moveTo(x1, y1);
-		this.c.lineTo(x2, y2);
+		this.c.moveTo(line.x1, line.y1);
+		this.c.lineTo(line.x2, line.y2);
 		this.c.stroke();
 	}
 	
@@ -69,6 +73,30 @@ class Dot {
 	}
 }
 
+class Line {
+	constructor(x1, y1, x2, y2) {
+		this.x1 = x1;
+		this.x2 = x2;
+		this.y1 = y1;
+		this.y2 = y2;
+	}
+}
+
+class Mouse {
+	constructor(canvas) {
+		this.canvas = canvas;
+		this.x = 0;
+		this.y = 0;
+	}
+	
+	setMouse(evt) {
+		var rect = this.canvas.getBoundingClientRect();
+		this.x = evt.clientX - rect.left;
+		this.y = evt.clientY - rect.top;
+		console.log(this.x + " " + this.y);
+	}
+}
+
 class Board {
 	constructor(screenWidth, screenHeight) {
 		const w = screenWidth;
@@ -91,6 +119,25 @@ class Board {
 					new Dot(box[2].x, box[2].bottom), new Dot(box[2].midX, box[2].bottom), new Dot(box[2].right, box[2].bottom),
 					new Dot(box[1].x, box[1].bottom), new Dot(box[1].midX, box[1].bottom), new Dot(box[1].right, box[1].bottom),
 					new Dot(box[0].x, box[0].bottom), new Dot(box[0].midX, box[0].bottom), new Dot(box[0].right, box[0].bottom)];
+			
+		var dots = this.dots;
+		
+		this.lines = [new Line(box[2].midX, box[2].y, box[0].midX, box[0].y), new Line(box[2].x, box[2].midY, box[0].x, box[0].midY),
+						new Line(box[2].right, box[2].midY, box[0].right, box[0].midY), new Line(box[2].midX, box[2].bottom, box[0].midX, box[0].bottom)];
+					
+		this.rows = [];
+		
+		for (var i = 0; i < dots.length; i+=3) {
+			this.rows.push([dots[i], dots[i+1], dots[i+2]]);
+		}
+		
+		for (var i = 0; i < this.rows[4].length; i++) {
+			this.rows[3].push(this.rows[4][i]);
+		}
+		
+		this.rows.splice(4, 1);
+		
+		console.log(this.rows);
 	}
 }
 
@@ -103,4 +150,7 @@ const drawer = new Drawer(context);
 const w = canvas.offsetWidth;
 const h = canvas.offsetHeight;
 const board = new Board(w, h);
+var mouse = new Mouse(canvas);
 drawer.drawBoard(board);
+canvas.addEventListener("mousemove", function(evt) {mouse.setMouse(evt);}, false);
+
