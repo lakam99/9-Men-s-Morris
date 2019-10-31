@@ -93,14 +93,19 @@ class Mouse {
 		var rect = this.canvas.getBoundingClientRect();
 		this.x = evt.clientX - rect.left;
 		this.y = evt.clientY - rect.top;
-		console.log(this.x + " " + this.y);
+		//console.log(this.x + " " + this.y);
 	}
+	
+	
 }
 
 class Board {
-	constructor(screenWidth, screenHeight) {
-		const w = screenWidth;
-		const h = screenHeight;
+	constructor(canvas) {
+		this.canvas = canvas;
+		this.mouseX = 0;
+		this.mouseY = 0;
+		const w = canvas.offsetWidth;
+		const h = canvas.offsetHeight;
 		const midX = Math.round(w / 2);
 		const midY = Math.round(h / 2);
 		const box1Size = w * 0.8;
@@ -139,6 +144,43 @@ class Board {
 		
 		console.log(this.rows);
 	}
+	
+	dotCoodAtMouse(){
+		var hitbox = 10;
+		var dot = 0;
+		
+		for (var x = 0; x < this.rows.length; x++) {
+			for (var y = 0; y < this.rows[x].length; y++) {
+				dot = this.rows[x][y];
+				if (this.mouseX >= dot.x - hitbox && this.mouseX <= dot.x + hitbox && this.mouseY >= dot.y - hitbox && this.mouseY <= dot.y + hitbox) {
+					console.log("Clicked " + dot.x + " " + dot.y + " at " + x + ", " + y);
+					return {'x': x, 'y': y};
+				}
+			}
+		}
+	}
+	
+	dotIndexAtMouse() {
+		var hitbox = 10;
+		var dot = 0;
+		
+		for (var i = 0; i < this.dots; i++) {
+			dot = this.dots[i];
+			if (this.mouseX >= dot.x - hitbox && this.mouseX <= dot.x + hitbox && this.mouseY >= dot.y - hitbox && this.mouseY <= dot.y + hitbox) {
+				console.log("Clicked " + dot.x + " " + dot.y + " at " + i);
+				return i;
+			}
+		}
+	}
+	
+	onClick(evt) {
+		var rect = this.canvas.getBoundingClientRect();
+		this.mouseX = evt.clientX - rect.left;
+		this.mouseY = evt.clientY - rect.top;
+		var dotCoods = this.dotCoodAtMouse();
+		var dotIndex = this.dotIndexAtMouse();
+		//console.log("Clicked " + this.mouseX + " " + this.mouseY);
+	}
 }
 
 
@@ -147,10 +189,8 @@ console.log("Hello");
 const canvas = document.getElementById("c");
 const context = canvas.getContext("2d");
 const drawer = new Drawer(context);
-const w = canvas.offsetWidth;
-const h = canvas.offsetHeight;
-const board = new Board(w, h);
+const board = new Board(canvas);
 var mouse = new Mouse(canvas);
 drawer.drawBoard(board);
 canvas.addEventListener("mousemove", function(evt) {mouse.setMouse(evt);}, false);
-
+canvas.addEventListener("click", function (evt) {board.onClick(evt);}, false);
